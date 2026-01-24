@@ -1,6 +1,5 @@
 const runRateAndMessageMultipleLadiesMultiTabs =
   require('./rate-and-message-multiple-ladies.js');
-
 const runMap = require('./run-map.js');
 
 module.exports = async function runMultiTab(context) {
@@ -8,29 +7,25 @@ module.exports = async function runMultiTab(context) {
   console.log('────────────────────────────────────────');
 
   /* ─────────────────────────────
-     STEP 1: Get RUN NUMBER
+     STEP 1: Read RUN_NUMBER
   ───────────────────────────── */
-
   const runNumber = Number(process.env.RUN_NUMBER);
 
-  if (!runNumber) {
-    throw new Error('❌ RUN_NUMBER not provided');
-  }
-
-  console.log('▶️ RUN_NUMBER received:', runNumber);
-  console.log('────────────────────────────────────────');
-
-  /* ─────────────────────────────
-     STEP 2: Get workloads
-  ───────────────────────────── */
-
-  const workloads = runMap.runs[runNumber];
-
-  if (!workloads) {
-    console.log(`⚠️ No workloads found for run ${runNumber}`);
+  if (!runNumber || !runMap[runNumber]) {
+    console.log('❌ Invalid or missing RUN_NUMBER');
+    console.log(' Provided RUN_NUMBER:', process.env.RUN_NUMBER);
+    console.log(' Expected: 1 to 18');
     console.log('🚪 Runner exiting safely');
     return;
   }
+
+  console.log(`▶️ RUN_NUMBER received: ${runNumber}`);
+  console.log('────────────────────────────────────────');
+
+  /* ─────────────────────────────
+     STEP 2: Get workloads for this run
+  ───────────────────────────── */
+  const workloads = runMap[runNumber];
 
   console.log(`🧵 Starting run ${runNumber}`);
   console.log(`🧵 Total tabs: ${workloads.length}`);
@@ -41,10 +36,9 @@ module.exports = async function runMultiTab(context) {
      STEP 3: EXISTING 6-TAB LOGIC
      (UNCHANGED)
   ───────────────────────────── */
-
   const tabPromises = workloads.map(async (tierConfig, index) => {
     console.log(`🧵 Preparing Tab ${index + 1}`);
-    console.log(`   Tier config:`, tierConfig);
+    console.log(` Tier config:`, tierConfig);
 
     const page = await context.newPage();
     console.log(`🧵 Tab ${index + 1} launched`);
@@ -54,7 +48,7 @@ module.exports = async function runMultiTab(context) {
       console.log(`✅ Tab ${index + 1} finished successfully`);
     } catch (err) {
       console.log(`❌ Tab ${index + 1} failed`);
-      console.log(`   Error: ${err.message}`);
+      console.log(` Error: ${err.message}`);
 
       await page.screenshot({
         path: `multiTab-error-run-${runNumber}-tab-${index + 1}.png`,
