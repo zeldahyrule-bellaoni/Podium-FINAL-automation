@@ -3,8 +3,8 @@ name: Run mspc.js
 on:
   workflow_dispatch:
     inputs:
-      run_number:
-        description: 'Run number to execute (1–18)'
+      RUN_NUMBER:
+        description: 'Run number provided by Google Apps Script'
         required: true
         type: string
 
@@ -49,7 +49,8 @@ jobs:
       - name: 🚀 Run mspc.js script
         run: node mspc.js
         env:
-          RUN_NUMBER: ${{ inputs.run_number }}
+          RUN_NUMBER: ${{ github.event.inputs.RUN_NUMBER }}
+
           LP_EMAIL: ${{ secrets.LP_EMAIL }}
           LP_PASSWORD: ${{ secrets.LP_PASSWORD }}
           LP_TELEPORT_URL: ${{ secrets.LP_TELEPORT_URL }}
