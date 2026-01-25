@@ -14,7 +14,7 @@ const runPodium = require('./podium.js');
 const runRateAndMessageMultipleLadiesMultiTabs = require('./rate-and-message-multiple-ladies.multiTabs.js');
 
 const scripts = [
-  { name: 'Burn Energy', fn: runBurnEnergy, alwaysRun: false },
+  { name: 'Burn Energy', fn: runBurnEnergy, alwaysRun: true },
   { name: 'Tele Event', fn: runTeleportEvent, envKey: 'LP_TELEPORT_URL' },
   { name: 'Maps Event', fn: runMapsEvent, envKey: 'LP_MAPS_URL' },
   { name: 'Slots Event', fn: runSlotsEvent, envKey: 'LP_SLOTS_URL' },
@@ -165,6 +165,7 @@ const scripts = [
   await browser.close();
   console.log(`\n🎉 All scripts done. Browser closed.`);
 })();
+
 
 
 
