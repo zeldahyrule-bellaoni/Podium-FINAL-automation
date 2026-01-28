@@ -116,7 +116,7 @@ module.exports = async function runRateAndMessageMultipleLadies(page, tierConfig
   }
   
   console.log('⏸ Pausing for 30 seconds to allow manual cancellation...');
-  await page.waitForTimeout(30 * 30 * 1000); // 30 seconds time out
+  await page.waitForTimeout(30 * 1000); // 30 seconds time out
 
   // final SAFE profiles
   const finalProfiles = collectedLadies
