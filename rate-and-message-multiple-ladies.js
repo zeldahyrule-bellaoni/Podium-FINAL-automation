@@ -125,19 +125,17 @@ module.exports = async function runRateAndMessageMultipleLadies(page, tierConfig
   }
   
   console.log('⏸ Pausing for 30 seconds to allow manual cancellation...');
-  await page.waitForTimeout(30 * 1000); // 30 seconds time out
-
-  // final SAFE profiles
-  const finalProfiles = collectedLadies
-    .filter(l => !excludedLadyNames.has(l.name.toLowerCase()))
-    .map(l => l.profileId); //keeps only the profile id for collected ladies
+  await page.waitForTimeout(30 * 1000); //30sec timeout
+  
+  const finalLadies = collectedLadies.filter(
+    l => !excludedLadyNames.has(l.name.toLowerCase()) //removes excluded profiles
+  );
 
   // ─────────────────────────────────────────────
   // 🔁 MAIN LOOP (UNCHANGED BEHAVIOUR)
   // ─────────────────────────────────────────────
-  for (let i = 0; i < finalProfiles.length; i++) {
-
-    const profileId = finalProfiles[i];
+  for (let i = 0; i < finalLadies.length; i++) {
+    const { profileId, ladyId, name } = finalLadies[i];
     const url = `https://v3.g.ladypopular.com/profile.php?id=${profileId}`;
 
     let caseType = 'case1';
@@ -148,99 +146,81 @@ module.exports = async function runRateAndMessageMultipleLadies(page, tierConfig
 
     try {
       await page.goto(url, { waitUntil: 'domcontentloaded', timeout: 60000 });
-      await page.waitForTimeout(2000);
+      await page.waitForSelector(
+        '.main-info .lady-name',
+        { timeout: 15000 }
+      );
 
-      const alreadyVotedText = await page
-        .locator('.lady-rating-wraper .alreadyVoted')
-        .textContent()
-        .catch(() => '');
-
-      if (alreadyVotedText.includes('won all podium prizes')) caseType = 'case2';
-      else if (alreadyVotedText.includes('already 3 votes')) caseType = 'case3';
-
-      if (caseType === 'case1') {
-        try {
-          const ratingButtons = await page
-            .locator('.lady-rating-wraper ol.rating li.active button')
-            .all();
-          
-          let maxVote = null;
-          
-          for (const btn of ratingButtons) {
-            const onclick = await btn.getAttribute('onclick');
-            if (!onclick) continue;
-            
-            const match = onclick.match(/podiumVote\('(\d+)',(\d+),(\d+)\)/);
-            if (!match) continue;
-            
-            const [, podiumType, ladyId, rating] = match;
-            const ratingNum = Number(rating);
-
-            // 🚨 EXCLUSION GUARD — case-insensitive name check (we need to map profileId → name)
-            const ladyObj = collectedLadies.find(l => l.ladyId === ladyId);
-            if (ladyObj && excludedLadyNames.has(ladyObj.name.toLowerCase())) {
-                skipped = true;
-                return;
-            }
-
-            if (!maxVote || ratingNum > maxVote.ratingNum) { 
-              maxVote = { podiumType, ladyId, rating, ratingNum };
-            }
-          }
-          
-          if (maxVote) {
-            const { podiumType, ladyId, rating } = maxVote;
-            
-            const res = await page.evaluate(
-              async ({ podiumType, ladyId, rating }) => {
-                const r = await fetch('/ajax/contest/podium.php', {
-                  method: 'POST',
-                  headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-                  body: new URLSearchParams({ action: 'vote', podiumType, ladyId, rating })
-                });
-                return r.json();
-              },
-              { podiumType, ladyId, rating }
-            );
-            
-            ratingResult = res?.status === 1;
-            if (ratingResult) ratingGiven = rating;
-          }
-          
-        } catch {
-          ratingResult = false;
+      //case determination
+      const stars = page.locator('.lg-profile-podium-rating-layout .ratings .star');
+      const starCount = await stars.count();
+      if (starCount === 0) {
+          caseType = 'case2'; // podium winner
+      } else {
+        const enabledStars = await page
+        .locator('.lg-profile-podium-rating-layout .ratings .star:not(.disabled)')
+        .count();
+        if (enabledStars > 0) {
+          caseType = 'case1'; // rateable
+        } else {
+          caseType = 'case3'; // already rated / other
         }
       }
 
-      const message =
-        caseType === 'case1' ? m1 :
-        caseType === 'case2' ? m2 : m3;
-
-      const messageButton = page
-        .locator('.following-container .message-btn[onclick*="startPrivateChat"]')
-        .first();
-
-      const onclickAttr = await messageButton.getAttribute('onclick').catch(() => null);
-      if (onclickAttr) {
-        const match = onclickAttr.match(/startPrivateChat\('(\d+)',\s*'([^']+)'\)/);
-        if (match) {
-          const [, id, name] = match;
-
-          await page.evaluate(({ id, name }) => {
-            startPrivateChat(id, name);
-          }, { id, name });
-
-          try {
-            await page.waitForSelector('#msgArea', { timeout: 7000 });
-            await page.evaluate(msg => {
-              document.getElementById('msgArea').value = msg;
-              document.getElementById('_sendMessageButton').click();
-            }, message);
-            messageResult = true;
-          } catch {
-            messageResult = false;
+      if (caseType === 'case1') {
+        try {
+          const stars = page.locator(
+            '.lg-profile-podium-rating-layout .ratings .star:not(.disabled)'
+          );
+          
+          const count = await stars.count();
+          if (count > 0) {
+            await stars.nth(count - 1).click(); // highest star
+            
+            // confirm success → all stars disabled
+            await page.waitForFunction(() => {
+              const stars = document.querySelectorAll(
+                '.lg-profile-podium-rating-layout .ratings .star'
+              );
+              return stars.length > 0 &&
+              [...stars].every(s => s.classList.contains('disabled'));
+            }, { timeout: 8000 });
+            
+            ratingResult = true;
+            ratingGiven = count;
           }
+        } catch {
+          ratingResult = false;
         }
+      } //if loop ends here
+
+      const message =
+      caseType === 'case1' ? m1 :
+      caseType === 'case2' ? m2 : m3;
+      
+      // 🚀 NEW: Use collectedLadies directly for safer messaging
+      const ladyObj = finalLadies[i]; // we already have profileId, ladyId, name
+      if (ladyObj) {
+        const { ladyId, name } = ladyObj;
+        
+        await page.evaluate(({ ladyId, name }) => {
+          startPrivateChat(ladyId, name);
+        }, { ladyId, name });
+        
+        try {
+          await page.waitForSelector('#msgArea', { timeout: 7000 });
+          await page.evaluate(msg => {
+            document.getElementById('msgArea').value = msg;
+            document.getElementById('_sendMessageButton').click();
+          }, message);
+          messageResult = true;
+        } catch {
+          messageResult = false;
+        }
+      } 
+      
+      else {
+        messageResult = false;
       }
 
     } catch {}
@@ -250,10 +230,11 @@ module.exports = async function runRateAndMessageMultipleLadies(page, tierConfig
       ratingResult === false ? '❌' : '⚪️';
 
     const messageEmoji = messageResult ? '✅' : '❌';
-
+    
     console.log(
-      `${tabLabel} - (${i + 1}/${finalProfiles.length}) ${url} | ${caseType} | ${ratingEmoji} ${messageEmoji}`
+      `${tabLabel} - (${i + 1}/${finalLadies.length}) ${url} | ${caseType} | ${ratingEmoji} ${messageEmoji}`
     );
+
   }
 
   console.log('🎉 TAB COMPLETED');
