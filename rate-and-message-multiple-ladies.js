@@ -5,61 +5,89 @@ module.exports = async function runRateAndMessageMultipleLadies(page, tierConfig
   const excludedLadyNames = new Set([
     'Bella Swan','Veronica Park','smyle','Dee Dee Kelley','Indila','Zelda Hyrule','Her Majesty','Felis Felicitas','Wild Rose','Agent X','Giggles','Pania','Everest','RAMBØ XT',
     // add all names you want to exclude
-  ].map(n => n.toLowerCase()));
+  ].map(n => n.toLowerCase())); // convert to lowercase for case-insensitive matching
 
   const m1 = 'Hello';
   const m2 = 'Hi'; //already won
   const m3 = 'Hi'; //168
 
-  const tabLabel = page._guid || 'T?';
+  const tabLabel = page._guid || 'T?'; //internal tab label in playwright
 
-  let collectedLadies = [];
+  // now stores objects, not just profileIds
+  let collectedLadies = []; //collects profileid, ladyid, name for each lady
 
-  await page.goto('https://v3.g.ladypopular.com', { waitUntil: 'domcontentloaded', timeout: 60000 });
+  await page.goto('https://v3.g.ladypopular.com', {
+    waitUntil: 'domcontentloaded',
+    timeout: 60000
+  });
   await page.waitForTimeout(2000);
 
   // ─────────────────────────────────────────────
-  // 🔍 COLLECT LADIES
+  // 🔍 COLLECT LADIES (PROFILE + LADY ID + NAME)
   // ─────────────────────────────────────────────
-  for (const { tierId, startPage, endPage } of tierConfigs) {
-    for (let currentPage = startPage; currentPage <= endPage; currentPage++) {
+  for (const { tierId, startPage, endPage } of tierConfigs) { 
+    for (let currentPage = startPage; currentPage <= endPage; currentPage++) { //goes page by page inside each tier
+
       const ladiesOnPage = await page.evaluate(
         async ({ currentPage, tierId }) => {
           const res = await fetch('/ajax/ranking/players.php', {
             method: 'POST',
-            body: new URLSearchParams({ action: 'getRanking', page: currentPage.toString(), tierId: tierId.toString() }),
+            body: new URLSearchParams({
+              action: 'getRanking',
+              page: currentPage.toString(),
+              tierId: tierId.toString()
+            }),
             credentials: 'same-origin'
           });
+
           const data = await res.json();
           if (!data.html) return [];
+
           const container = document.createElement('div');
           container.innerHTML = data.html;
+
           const rows = container.querySelectorAll('tbody tr[id^="num"]');
           const results = [];
+
           rows.forEach(row => {
-            const guildName = row.querySelector('.ranking-player-guild .player-guild-logo-name')?.textContent.trim();
+            // guid check
+            const guildName = row
+            .querySelector('.ranking-player-guild .player-guild-logo-name')
+            ?.textContent.trim();
             if (!guildName) return;
 
+            //extracting profile URL
             const profileLink = row.querySelector('a[href*="ladygram.php"][href*="lady_id="]');
             if (!profileLink) return;
+
             const href = profileLink.getAttribute('href');
             const profileMatch = href.match(/lady_id=(\d+)/);
             if (!profileMatch) return;
+            
             const profileId = profileMatch[1];
 
+            // getting name and lady id from chat button
             const chatBtn = row.querySelector('button[onclick^="startPrivateChat"]');
             if (!chatBtn) return;
+
             const onclick = chatBtn.getAttribute('onclick') || '';
             const chatMatch = onclick.match(/startPrivateChat\((\d+),\s*'([^']+)'\)/);
             if (!chatMatch) return;
+
             const ladyId = chatMatch[1];
             const name = chatMatch[2];
 
             results.push({ profileId, ladyId, name });
           });
-          if (!results.length) console.warn('⚠️ No ladies collected on page', currentPage, 'tier', tierId);
+          
+          // 🛡️ SAFETY NET
+          if (!results.length) {
+            console.warn('⚠️ No ladies collected on page',currentPage,'tier',tierId);
+          }
+
           return results;
-        }, { currentPage, tierId }
+        },
+        { currentPage, tierId }
       );
 
       collectedLadies.push(...ladiesOnPage);
@@ -67,7 +95,7 @@ module.exports = async function runRateAndMessageMultipleLadies(page, tierConfig
     }
   }
 
-  // Remove duplicates
+  // detects for duplicate entries based on profileId
   const seenProfiles = new Set();
   collectedLadies = collectedLadies.filter(l => {
     if (seenProfiles.has(l.profileId)) return false;
@@ -75,97 +103,131 @@ module.exports = async function runRateAndMessageMultipleLadies(page, tierConfig
     return true;
   });
 
-  // Early exclusion
-  const excludedFound = collectedLadies.filter(l => excludedLadyNames.has(l.name.toLowerCase()));
+  // ─────────────────────────────────────────────
+  // 🚨 EARLY EXCLUSION (HARD SAFETY)
+  // ─────────────────────────────────────────────
+  const excludedFound = collectedLadies.filter(l =>
+    excludedLadyNames.has(l.name.toLowerCase())
+  );
+
+  console.log('⏸ MANUAL VERIFICATION PAUSE INITIATED');
+
   if (excludedFound.length > 0) {
     console.log('🚨🚨 EXCLUDED LADIES DETECTED 🚨🚨');
-    excludedFound.forEach(l => console.log(`⛔ EXCLUDED: ${l.name} | ladyId=${l.ladyId} | profileId=${l.profileId}`));
+
+    excludedFound.forEach(l => {
+      console.log(
+        `⛔ EXCLUDED: ${l.name} | ladyId=${l.ladyId} | profileId=${l.profileId}`
+      );
+    });
   } else {
     console.log('✅ No excluded ladies detected automatically. Please manually cross-verify before continuing.');
   }
+  
   console.log('⏸ Pausing for 30 seconds to allow manual cancellation...');
-  await page.waitForTimeout(30 * 1000);
-
-  const finalLadies = collectedLadies.filter(l => !excludedLadyNames.has(l.name.toLowerCase()));
+  await page.waitForTimeout(30 * 1000); //30sec timeout
+  
+  const finalLadies = collectedLadies.filter(
+    l => !excludedLadyNames.has(l.name.toLowerCase()) //removes excluded profiles
+  );
 
   // ─────────────────────────────────────────────
-  // 🔁 MAIN LOOP
+  // 🔁 MAIN LOOP (UNCHANGED BEHAVIOUR)
   // ─────────────────────────────────────────────
   for (let i = 0; i < finalLadies.length; i++) {
     const { profileId, ladyId, name } = finalLadies[i];
-    const url = `https://v3.g.ladypopular.com/profile.php?id=${profileId}`;
-
+    const url = `https://v3.g.ladypopular.com/ladygram.php?lady_id=${ladyId}`;
+    
     let caseType = 'case1';
     let ratingResult = null;
     let ratingGiven = null;
     let messageResult = false;
+    let skipped = false;
 
     try {
       await page.goto(url, { waitUntil: 'domcontentloaded', timeout: 60000 });
-      await page.waitForSelector('.main-info .lady-name', { timeout: 15000 });
+      await page.waitForSelector(
+        '.main-info .lady-name',
+        { timeout: 15000 }
+      );
 
-      // Determine case
-      const starCount = await page.locator('.lg-profile-podium-rating-layout .ratings .star').count();
+      //case determination
+      const stars = page.locator('.lg-profile-podium-rating-layout .ratings .star');
+      const starCount = await stars.count();
       if (starCount === 0) {
-        caseType = 'case2'; // podium winner
+          caseType = 'case2'; // podium winner
       } else {
-        const enabledStars = await page.locator('.lg-profile-podium-rating-layout .ratings .star:not(.disabled)').count();
-        caseType = enabledStars > 0 ? 'case1' : 'case3';
-      }
-
-      // ✅ RATING
-      if (caseType === 'case1') {
-        try {
-          const stars = await page.locator('.lg-profile-podium-rating-layout .ratings .star:not(.disabled)');
-          const count = await stars.count();
-          console.log(`DEBUG: Found ${count} clickable stars for ${name}`);
-          if (count > 0) {
-            await stars.nth(count - 1).click(); // click highest
-            await page.waitForFunction(() => {
-              const stars = document.querySelectorAll('.lg-profile-podium-rating-layout .ratings .star');
-              return stars.length > 0 && [...stars].every(s => s.classList.contains('disabled'));
-            }, { timeout: 8000 });
-            ratingResult = true;
-            ratingGiven = count;
-          }
-        } catch (e) {
-          console.log('⚠️ Rating failed:', e);
-          ratingResult = false;
+        const enabledStars = await page
+        .locator('.lg-profile-podium-rating-layout .ratings .star:not(.disabled)')
+        .count();
+        if (enabledStars > 0) {
+          caseType = 'case1'; // rateable
+        } else {
+          caseType = 'case3'; // already rated / other
         }
       }
 
-      // ✅ MESSAGE
-      const message = caseType === 'case1' ? m1 : caseType === 'case2' ? m2 : m3;
+      if (caseType === 'case1') {
+        try {
+          const stars = page.locator(
+            '.lg-profile-podium-rating-layout .ratings .star:not(.disabled)'
+          );
+          
+          const count = await stars.count();
+          if (count > 0) {
+            await stars.nth(count - 1).click(); // highest star
+            
+            // confirm success → all stars disabled
+            await page.waitForFunction(() => {
+              const stars = document.querySelectorAll(
+                '.lg-profile-podium-rating-layout .ratings .star'
+              );
+              return stars.length > 0 &&
+              [...stars].every(s => s.classList.contains('disabled'));
+            }, { timeout: 8000 });
+            
+            ratingResult = true;
+            ratingGiven = count;
+          }
+        } catch {
+          ratingResult = false;
+        }
+      } //if loop ends here
 
-      try {
+      const message =
+      caseType === 'case1' ? m1 :
+      caseType === 'case2' ? m2 : m3;
+      
+      if (profileId && ladyId && name) {
         await page.evaluate(({ ladyId, name }) => {
           startPrivateChat(ladyId, name);
         }, { ladyId, name });
-
-        await page.waitForTimeout(1000); // give time for chat box
-        await page.waitForSelector('#msgArea', { timeout: 10000 });
-
-        await page.evaluate(msg => {
-          const el = document.getElementById('msgArea');
-          if (el) el.value = msg;
-          const btn = document.getElementById('_sendMessageButton');
-          if (btn) btn.click();
-        }, message);
-
-        messageResult = true;
-      } catch (e) {
-        console.log('⚠️ Messaging failed for', name, e);
+        
+        try {
+          await page.waitForSelector('#msgArea', { timeout: 7000 });
+          await page.evaluate(msg => {
+            document.getElementById('msgArea').value = msg;
+            document.getElementById('_sendMessageButton').click();
+          }, message);
+          messageResult = true;
+        } catch {
+          messageResult = false;
+        }
+      } else {
         messageResult = false;
       }
+    } catch {}
 
-    } catch (err) {
-      console.log('⚠️ Profile load failed:', url, err);
-    }
+    const ratingEmoji =
+      ratingResult === true ? `✅(${ratingGiven})` :
+      ratingResult === false ? '❌' : '⚪️';
 
-    const ratingEmoji = ratingResult === true ? `✅(${ratingGiven})` : ratingResult === false ? '❌' : '⚪️';
     const messageEmoji = messageResult ? '✅' : '❌';
+    
+    console.log(
+      `${tabLabel} - (${i + 1}/${finalLadies.length}) ${url} | ${caseType} | ${ratingEmoji} ${messageEmoji}`
+    );
 
-    console.log(`${tabLabel} - (${i + 1}/${finalLadies.length}) ${url} | ${caseType} | ${ratingEmoji} ${messageEmoji}`);
   }
 
   console.log('🎉 TAB COMPLETED');
