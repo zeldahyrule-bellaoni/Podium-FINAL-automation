@@ -7,9 +7,9 @@ module.exports = async function runRateAndMessageMultipleLadies(page, tierConfig
     // add all names you want to exclude
   ].map(n => n.toLowerCase())); // convert to lowercase for case-insensitive matching
 
-  const m1 = 'We are made of star-stuff - Carl Sagan.	Shine so hard they need sunglasses! xoxo	₍ᐢ. .ᐢ₎ ₊˚⊹♡';
-  const m2 = 'We are made of star-stuff - Carl Sagan.	Shine so hard they need sunglasses! xoxo	₍ᐢ. .ᐢ₎ ₊˚⊹♡'; //already won
-  const m3 = 'We are made of star-stuff - Carl Sagan.	Shine so hard they need sunglasses! xoxo	₍ᐢ. .ᐢ₎ ₊˚⊹♡'; //168
+  const m1 = 'We are made of star-stuff - Carl Sagan. Shine so hard they need sunglasses, my frnd! xoxo 💖✨';
+  const m2 = 'We are made of star-stuff - Carl Sagan. Shine so hard they need sunglasses, my frnd! xoxo 💖✨'; //already won
+  const m3 = 'We are made of star-stuff - Carl Sagan. Shine so hard they need sunglasses, my frnd! xoxo 💖✨'; //168
 
   const tabLabel = page._guid || 'T?'; //internal tab label in playwright
 
