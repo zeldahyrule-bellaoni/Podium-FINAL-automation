@@ -4,6 +4,10 @@ module.exports = async function runRateAndMessageMultipleLadies(page, tierConfig
   // 🚨 CANONICAL EXCLUSION SET (LADY NAMES, case-insensitive)
   const excludedLadyNames = new Set([
     'Bella Swan','Veronica Park','smyle','Dee Dee Kelley','Indila','Zelda Hyrule','Her Majesty','Sakura Haruno','Wild Rose','Agent X','Giggles','Pania','Everest','RAMBØ XT','Katniss Everdeen',
+    'lady liz','Lotus','LXUU_ABDE','Queen Taylen','Natasha Romanoff','Jodza','Joselia','Astoria','уσυηg кιηg','Red Queen','Lady Penelope','Scarlet Timberlake','Ashley','AVA','MELODY','AjS_StYlE',
+    'King Tyler','Nicole_Edgar','Jhosseline','Jewerline','Mpetty','nadia','Sara','Brianna','Jasmine','Natally','Лана','LaooyaA','Alexandra','Stefanie','katinka-jc','Gizem','Maya','Donna Rowe',
+    'Artemisa','Miškica','Octavia','Lady Jamie','اماندا N','stef','Emma','Shiry','margo1726','Veronica','Aelin Galathynius','elegent julei','The Pirate','lady Sophia','Serena','liya','Cathexo',
+    'Amelia Jacobs','Eman32','Kleophya','MistfulSky','Alira','AnnaRegina','Isabella','Athena','veronika','Chloe','Sylvia Lorena',
     // add all names you want to exclude
   ].map(n => n.toLowerCase())); // convert to lowercase for case-insensitive matching
 
