@@ -11,9 +11,9 @@ module.exports = async function runRateAndMessageMultipleLadies(page, tierConfig
     // add all names you want to exclude
   ].map(n => n.toLowerCase())); // convert to lowercase for case-insensitive matching
 
-  const m1 = 'The robbed that smiles, steals something from the thief - William Shakespeare	🤍	Have a nice day! Max stars 4U love	(◍•ᴗ•◍)❤';
-  const m2 = 'The robbed that smiles, steals something from the thief - William Shakespeare	🤍	Have a nice day love! xoxo	(◍•ᴗ•◍)❤'; //already won
-  const m3 = 'The robbed that smiles, steals something from the thief - William Shakespeare	🤍	Have a nice day love! xoxo	(◍•ᴗ•◍)❤'; //168
+  const m1 = 'Everyone thinks they have the best dog, and none of them are wrong 	🤍	Have a nice day! Max stars 4U love	(ෆ˙ᵕ˙ෆ)♡';
+  const m2 = 'Everyone thinks they have the best dog, and none of them are wrong 	🤍	Have a nice day love! xoxo	(ෆ˙ᵕ˙ෆ)♡'; //already won
+  const m3 = 'Everyone thinks they have the best dog, and none of them are wrong 	🤍	Have a nice day love! xoxo	(ෆ˙ᵕ˙ෆ)♡'; //168
 
   const tabLabel = page._guid || 'T?'; //internal tab label in playwright
 
