@@ -7,13 +7,13 @@ module.exports = async function runRateAndMessageMultipleLadies(page, tierConfig
     'lady liz','Lotus','LXUU_ABDE','Queen Taylen','Natasha Romanoff','Jodza','Joselia','Astoria','уσυηg кιηg','Red Queen','Lady Penelope','Scarlet Timberlake','Ashley','AVA','MELODY','AjS_StYlE',
     'King Tyler','Nicole_Edgar','Jhosseline','Jewerline','Mpetty','nadia','Sara','Brianna','Jasmine','Natally','Лана','LaooyaA','Alexandra','Stefanie','katinka-jc','Gizem','Maya','Donna Rowe',
     'Artemisa','Miškica','Octavia','Lady Jamie','اماندا N','stef','Emma','Shiry','margo1726','Veronica','Aelin Galathynius','elegent julei','The Pirate','lady Sophia','Serena','liya','Cathexo',
-    'Amelia Jacobs','Eman32','Kleophya','MistfulSky','Alira','AnnaRegina','Isabella','Athena','veronika','Chloe','Sylvia Lorena','Сензация','nade',
+    'Amelia Jacobs','Eman32','Kleophya','MistfulSky','Alira','AnnaRegina','Isabella','Athena','veronika','Chloe','Sylvia Lorena','Сензация','nade','denny','lady05','jood14','COCCOLE....',
     // add all names you want to exclude
   ].map(n => n.toLowerCase())); // convert to lowercase for case-insensitive matching
 
-  const m1 = 'Everyone thinks they have the best dog, and none of them are wrong 	🤍	Have a nice day! Max stars 4U love	(ෆ˙ᵕ˙ෆ)♡';
-  const m2 = 'Everyone thinks they have the best dog, and none of them are wrong 	🤍	Have a nice day love! xoxo	(ෆ˙ᵕ˙ෆ)♡'; //already won
-  const m3 = 'Everyone thinks they have the best dog, and none of them are wrong 	🤍	Have a nice day love! xoxo	(ෆ˙ᵕ˙ෆ)♡'; //168
+  const m1 = 'Say what you want about aging, its still the only way to have old friends - Robert Breault	🤍	Have a nice day! Big hugs 4U love	(づ ◕‿◕ )づ';
+  const m2 = 'Say what you want about aging, its still the only way to have old friends - Robert Breault	🤍	Have a nice day! Big hugs 4U love	(づ ◕‿◕ )づ'; //already won
+  const m3 = 'Say what you want about aging, its still the only way to have old friends - Robert Breault	🤍	Have a nice day! Big hugs 4U love	(づ ◕‿◕ )づ'; //168
 
   const tabLabel = page._guid || 'T?'; //internal tab label in playwright
 
