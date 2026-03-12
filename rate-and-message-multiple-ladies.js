@@ -8,12 +8,16 @@ module.exports = async function runRateAndMessageMultipleLadies(page, tierConfig
     'King Tyler','Nicole_Edgar','Jhosseline','Jewerline','Mpetty','nadia','Sara','Brianna','Jasmine','Natally','Лана','LaooyaA','Alexandra','Stefanie','katinka-jc','Gizem','Maya','Donna Rowe',
     'Artemisa','Miškica','Octavia','Lady Jamie','اماندا N','stef','Emma','Shiry','margo1726','Veronica','Aelin Galathynius','elegent julei','The Pirate','lady Sophia','Serena','liya','Cathexo',
     'Amelia Jacobs','Eman32','Kleophya','MistfulSky','Alira','AnnaRegina','Isabella','Athena','veronika','Chloe','Sylvia Lorena','Сензация','nade','denny','lady05','jood14','COCCOLE....',
+    'Cayle','duushi','Louis','vicky','Hridita','хілларі','Alex','Анна','Lina','HOPE HOD KETER','НИЛО','Thynaël','Lana turner','Lamia','Elodeja','Kaoda Twinkle','Andreeasophia','Alexandra_Sunshine',
+    'Anistemi','AitacJm','Abhigya','May Fernandes','LadyDeeDee','Cat Woman','Metal Princess','Queen of_girls','Ferozekhan.lover','Fenty','Annie','Harley Quinn','mykasa','Kahh','Auralis','melissa',
+    'Renata','Athenaya','zani ali','tiki1','Mikasapisame','derya','Queen C','Αννα','Nesryn','Marki','FΣΛЯLΣSS','Didiqn','VALERIA','𝓐𝓷𝓷𝓪','Marina Fathy','azhar','Aurora','Katherine_Amara',
+    'Anastassia','CharShawn','DOLCE MILK',
     // add all names you want to exclude
   ].map(n => n.toLowerCase())); // convert to lowercase for case-insensitive matching
 
-  const m1 = 'Forgive, O Lord, my little jokes on Thee, and I will forgive Thy great big one on me - Robert Frost	🤍	Wishing you a beautiful day!	(◠‿◠)♡';
-  const m2 = 'Forgive, O Lord, my little jokes on Thee, and I will forgive Thy great big one on me - Robert Frost	🤍	Wishing you a beautiful day!	(◠‿◠)♡'; //already won
-  const m3 = 'Forgive, O Lord, my little jokes on Thee, and I will forgive Thy great big one on me - Robert Frost	🤍	Wishing you a beautiful day!	(◠‿◠)♡'; //168
+  const m1 = 'I am thankful that in a troubled world no calamity can prevent the return of spring - Helen Keller	🌿🌷	Wishing you a beautiful day!';
+  const m2 = 'I am thankful that in a troubled world no calamity can prevent the return of spring - Helen Keller	🌿🌷	Wishing you a beautiful day!'; //already won
+  const m3 = 'I am thankful that in a troubled world no calamity can prevent the return of spring - Helen Keller	🌿🌷	Wishing you a beautiful day!'; //168
 
   const tabLabel = page._guid || 'T?'; //internal tab label in playwright
 
