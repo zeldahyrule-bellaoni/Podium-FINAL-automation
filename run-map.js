@@ -17,7 +17,7 @@ module.exports = {
   { tierId: 3, startPage: 151, endPage: 200 },
   { tierId: 3, startPage: 201, endPage: 250 },
   { tierId: 3, startPage: 251, endPage: 299 }
-]
+],
 
 1: [
   { tierId: 2, startPage: 1,   endPage: 57 },
@@ -26,7 +26,8 @@ module.exports = {
   { tierId: 2, startPage: 172, endPage: 228 },
   { tierId: 2, startPage: 229, endPage: 284 },
   { tierId: 2, startPage: 285, endPage: 340 }
-]*/
+],
+*/
 
   // ================= RUN 2 =================
   2: [
