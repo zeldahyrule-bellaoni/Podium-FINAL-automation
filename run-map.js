@@ -1,14 +1,14 @@
 module.exports = {
 
   // ================= RUN 1 =================
-  /*1: [
+  1: [
     { tierId: 10, startPage: 1,   endPage: 7 },
     { tierId: 10, startPage: 8,   endPage: 14 },
     { tierId: 10, startPage: 15,  endPage: 21 },
     { tierId: 10, startPage: 22,  endPage: 28 },
     { tierId: 10, startPage: 29,  endPage: 35 },
     { tierId: 10, startPage: 36,  endPage: 42 }
-  ],*/
+  ],
 
   /* 1: [
   { tierId: 3, startPage: 1,   endPage: 50 },
@@ -19,14 +19,14 @@ module.exports = {
   { tierId: 3, startPage: 251, endPage: 299 }
  ], */
 
- 1: [
+ /* 1: [
   { tierId: 2, startPage: 1,   endPage: 57 },
   { tierId: 2, startPage: 58,  endPage: 114 },
   { tierId: 2, startPage: 115, endPage: 171 },
   { tierId: 2, startPage: 172, endPage: 228 },
   { tierId: 2, startPage: 229, endPage: 284 },
   { tierId: 2, startPage: 285, endPage: 340 }
- ],
+ ], */
 
   // ================= RUN 2 =================
   2: [
