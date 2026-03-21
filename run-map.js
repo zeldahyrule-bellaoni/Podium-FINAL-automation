@@ -10,23 +10,23 @@ module.exports = {
     { tierId: 10, startPage: 36,  endPage: 42 }
   ], */
 
-  1: [
+  /*1: [
   { tierId: 3, startPage: 1,   endPage: 50 },
   { tierId: 3, startPage: 51,  endPage: 100 },
   { tierId: 3, startPage: 101, endPage: 150 },
   { tierId: 3, startPage: 151, endPage: 200 },
   { tierId: 3, startPage: 201, endPage: 250 },
   { tierId: 3, startPage: 251, endPage: 299 }
- ],
+ ],*/
 
- /* 1: [
+ 1: [
   { tierId: 2, startPage: 1,   endPage: 57 },
   { tierId: 2, startPage: 58,  endPage: 114 },
   { tierId: 2, startPage: 115, endPage: 171 },
   { tierId: 2, startPage: 172, endPage: 228 },
   { tierId: 2, startPage: 229, endPage: 284 },
   { tierId: 2, startPage: 285, endPage: 340 }
- ], */
+ ], 
 
   // ================= RUN 2 =================
   2: [
