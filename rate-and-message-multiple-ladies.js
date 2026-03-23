@@ -13,13 +13,13 @@ module.exports = async function runRateAndMessageMultipleLadies(page, tierConfig
     'Renata','Athenaya','zani ali','tiki1','Mikasapisame','derya','Queen C','Αννα','Nesryn','Marki','FΣΛЯLΣSS','Didiqn','VALERIA','𝓐𝓷𝓷𝓪','Marina Fathy','azhar','Aurora','Katherine_Amara',
     'Anastassia','CharShawn','CVRA','DOLCE MILK','darkknightfallen','Shenhe','Medyson','MI 997','Hellga','liseokk','gatsby_elle','Heeyat Sd','Zahra','Furiosa','Scarlett','MOON DANCER','Sea Smoke','Silver Gryphon',
     'genesssa','TOMI xR','viksa','seyoung','ell','iskrus','Love_Damon','the legend','zizoo','sawako','Gracelan','danae','Susie','Lillian-Grace','Isra and Douaa','Jill','Soleilla','G.Giovanna','Mila','Ива Лени',
-    'Doviliukas','Iro','My beautiful lady','Maryse','Reckless_ThinG','Danicawho','Surìe','Ever','Paris.Winter',
+    'Doviliukas','Iro','My beautiful lady','Maryse','Reckless_ThinG','Danicawho','Surìe','Ever','Paris.Winter','G.Giovanna','perinaz',
     // add all names you want to exclude
   ].map(n => n.toLowerCase())); // convert to lowercase for case-insensitive matching
 
-  const m1 = 'Till the flowers listen with unfolded bells; all winds murmur over summer grass - Bessie Rayner Parkes	🌿🌷	Happy 1st day of spring! Max stars 4U, lovely flower	(◍•ᴗ•◍)✿';
-  const m2 = 'Till the flowers listen with unfolded bells; all winds murmur over summer grass - Bessie Rayner Parkes	🌿🌷	Happy 1st day of spring, lovely flower	(◍•ᴗ•◍)✿'; //already won
-  const m3 = 'Till the flowers listen with unfolded bells; all winds murmur over summer grass - Bessie Rayner Parkes	🌿🌷	Happy 1st day of spring, lovely flower	(◍•ᴗ•◍)✿'; //168
+  const m1 = 'Smiling can trick your brain into happiness	🤍	Happy new week and Max stars 4U!	(◠‿◠)♡';
+  const m2 = 'Smiling can trick your brain into happiness	🤍	Happy new week!	(◠‿◠)♡'; //already won
+  const m3 = 'Smiling can trick your brain into happiness	🤍	Happy new week!	(◠‿◠)♡'; //168
 
   const tabLabel = page._guid || 'T?'; //internal tab label in playwright
 
