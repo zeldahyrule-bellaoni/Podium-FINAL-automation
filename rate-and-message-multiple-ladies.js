@@ -14,7 +14,7 @@ module.exports = async function runRateAndMessageMultipleLadies(page, tierConfig
     'Anastassia','CharShawn','CVRA','DOLCE MILK','darkknightfallen','Shenhe','Medyson','MI 997','Hellga','liseokk','gatsby_elle','Heeyat Sd','Zahra','Furiosa','Scarlett','MOON DANCER','Sea Smoke','Silver Gryphon',
     'genesssa','TOMI xR','viksa','seyoung','ell','iskrus','Love_Damon','the legend','zizoo','sawako','Gracelan','danae','Susie','Lillian-Grace','Isra and Douaa','Jill','Soleilla','G.Giovanna','Mila','Ива Лени',
     'Doviliukas','Iro','My beautiful lady','Maryse','Reckless_ThinG','Danicawho','Surìe','Ever','Paris.Winter','G.Giovanna','perinaz','ash0101','Nata_','Ку-ку','xox19mama91xox','Yelyah Williams','moana-22',
-    'billie','Ponnie','.Auksė','H W','phuong thảo','Aya','Kim Miu',
+    'billie','Ponnie','.Auksė','H W','phuong thảo','Aya','Kim Miu','Sekhmet','Denica',
     // add all names you want to exclude
   ].map(n => n.toLowerCase())); // convert to lowercase for case-insensitive matching
 
